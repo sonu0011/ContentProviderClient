@@ -1,5 +1,6 @@
 package codetutor.youtube.com.todoclient;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,11 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG=MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
-    private TextView textViewContent,textViewCount;
+    private TextView textViewContent, textViewCount;
 
     private EditText editTextWhere;
 
@@ -28,19 +29,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textViewContent=(TextView)findViewById(R.id.textViewContent);
-        textViewCount=(TextView)findViewById(R.id.textViewCount);
-        editTextWhere=(EditText)findViewById(R.id.editTextWhere);
+        textViewContent = findViewById(R.id.textViewContent);
+        textViewCount = findViewById(R.id.textViewCount);
+        editTextWhere = findViewById(R.id.editTextWhere);
 
-        buttonGetAllToDos=(Button)findViewById(R.id.buttonGetAllToDos);
-        buttonGetToDoForPlace=(Button)findViewById(R.id.buttonGetToDoForPlace);
-        buttonNext=(Button)findViewById(R.id.buttonNext);
+        buttonGetAllToDos = findViewById(R.id.buttonGetAllToDos);
+        buttonGetToDoForPlace = findViewById(R.id.buttonGetToDoForPlace);
+        buttonNext = findViewById(R.id.buttonNext);
 
         buttonGetAllToDos.setOnClickListener(this);
         buttonGetToDoForPlace.setOnClickListener(this);
         buttonNext.setOnClickListener(this);
 
-        contentResolver=getContentResolver();
+        contentResolver = getContentResolver();
 
     }
 
@@ -51,52 +52,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setAllToDos();
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.buttonGetAllToDos: setAllToDos(); break;
-            case R.id.buttonGetToDoForPlace: setSpecificPlaceToDos(); break;
-            case R.id.buttonNext:startNextActivity();break;
+        switch (view.getId()) {
+            case R.id.buttonGetAllToDos:
+                setAllToDos();
+                break;
+            case R.id.buttonGetToDoForPlace:
+                setSpecificPlaceToDos();
+                break;
+            case R.id.buttonNext:
+                startNextActivity();
+                break;
         }
     }
 
-    private void startNextActivity(){
-        Intent intent=new Intent(getApplicationContext(),SecondActivity.class);
+    private void startNextActivity() {
+        Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
         startActivity(intent);
     }
-    private void setAllToDos(){
-        Cursor cursor=contentResolver.query(ToDoProviderConstants.CONTENT_URI_1, null,null,null,null,null);
-        StringBuilder stringBuilder=new StringBuilder("");
-        if(cursor!=null &cursor.getCount()>0){
 
-            while(cursor.moveToNext()){
-                stringBuilder.append(cursor.getLong(0)+", "+cursor.getString(1)+", "+cursor.getString(2)+"\n");
+    private void setAllToDos() {
+        Cursor cursor = contentResolver.query(ToDoProviderConstants.CONTENT_URI_1, null, null, null, null, null);
+        StringBuilder stringBuilder = new StringBuilder();
+        if (cursor != null & cursor.getCount() > 0) {
+
+            while (cursor.moveToNext()) {
+                stringBuilder.append(cursor.getLong(0) + ", " + cursor.getString(1) + ", " + cursor.getString(2) + "\n");
             }
         }
         cursor.close();
         textViewContent.setText(stringBuilder.toString());
     }
 
-    private void setSpecificPlaceToDos(){
-        String place=editTextWhere.getText().toString();
-        StringBuilder stringBuilder=new StringBuilder("");
-        Cursor cursor=contentResolver.query(ToDoProviderConstants.CONTENT_URI_2,null,null,new String[]{place},null,null);
+    private void setSpecificPlaceToDos() {
+        String place = editTextWhere.getText().toString();
+        StringBuilder stringBuilder = new StringBuilder();
+        Cursor cursor = contentResolver.query(ToDoProviderConstants.CONTENT_URI_2, null, null, new String[]{place}, null, null);
 
-        if(cursor!=null &cursor.getCount()>0){
+        if (cursor != null & cursor.getCount() > 0) {
 
-            while(cursor.moveToNext()){
-                stringBuilder.append(cursor.getLong(0)+", "+cursor.getString(1)+"\n");
+            while (cursor.moveToNext()) {
+                stringBuilder.append(cursor.getLong(0) + ", " + cursor.getString(1) + "\n");
             }
         }
         cursor.close();
         textViewContent.setText(stringBuilder.toString());
     }
 
-    private void setCount(){
-        Cursor cursor=contentResolver.query(ToDoProviderConstants.CONTENT_URI_3,null,null,null,null,null);
-        if(cursor!=null && cursor.getCount()>0){
+    private void setCount() {
+        Cursor cursor = contentResolver.query(ToDoProviderConstants.CONTENT_URI_3, null, null, null, null, null);
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
-            textViewCount.setText("Total ToDos Count: "+cursor.getInt(0));
+            textViewCount.setText("Total ToDos Count: " + cursor.getInt(0));
         }
         cursor.close();
     }
